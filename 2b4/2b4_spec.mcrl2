@@ -4,26 +4,12 @@ sort
 
 map
 	next: Colour -> Colour;
-	check: Colour # Colour # Colour # Colour -> Bool;
-	go: Colour -> Bool;
-
-var
-	c1,c2,c3,c4 : Colour;
 
 eqn
 	next(none) = red;
 	next(red) = green;
 	next(green) = yellow;
 	next(yellow) = red;
-
-	go(c1) = (c1 == green || c1 == yellow);
-
-	check(c1,c2,c3,c4) = 
-		if(
-			((go(c1) || go(c3)) && (go(c2) || go(c4)))
-			,false
-			,true
-		);
 
 act
 	show: CardinalDirection # Colour;

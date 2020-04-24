@@ -27,7 +27,6 @@ eqn
 
 act
 	show: CardinalDirection # Colour;
-	crossingUnsafe: Colour # Colour # Colour # Colour;
 	mon: CardinalDirection # Colour;
 
 proc
@@ -46,8 +45,7 @@ act
 init
 	allow(
 		{
-			colourSeen,
-			crossingUnsafe
+			colourSeen
 		},
 	comm(
 		{
