@@ -6,6 +6,7 @@ map
 	next: Colour -> Colour;
 	check: Colour # Colour # Colour # Colour -> Bool;
 	go: Colour -> Bool;
+	colourOnly: Colour -> Colour;
 
 var
 	c1,c2,c3,c4 : Colour;
@@ -15,6 +16,11 @@ eqn
 	next(red) = green;
 	next(green) = yellow;
 	next(yellow) = red;
+
+	colourOnly(none) = red;
+	colourOnly(red) = red;
+	colourOnly(yellow) = yellow;
+	colourOnly(green) = green;
 
 	go(c1) = (c1 == green || c1 == yellow);
 
@@ -43,7 +49,7 @@ proc
 
 	Monitor(c1,c2,c3,c4 : Colour) = 
 		!check(c1,c2,c3,c4) 
-		-> crossingUnsafe(c1,c2,c3,c4).delta
+		-> crossingUnsafe(colourOnly(c1),colourOnly(c2),colourOnly(c3),colourOnly(c4)).delta
 		<>  (
 				mon(north, next(c1)).Monitor(c1=next(c1))+
 				mon(east , next(c2)).Monitor(c2=next(c2))+

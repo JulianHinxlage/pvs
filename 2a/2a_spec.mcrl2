@@ -67,7 +67,7 @@ proc
 	VendingMachine = VM(0);	
 
 	VM(credit : Int) =
-		(credit < 2000) -> sum c : Coin.accept(c).VM(credit + value(c))
+		(credit < 200) -> sum c : Coin.accept(c).VM(credit + value(c))
 		+ sum p: Product.(
 			(credit >= price(p)) -> offer(p).serve(p).VM(credit - price(p))
 		)
