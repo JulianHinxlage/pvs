@@ -1,0 +1,66 @@
+sort
+	CardinalDirection = struct north | east | south | west;
+	Colour = struct red | yellow | green | none;
+
+map
+	next: Colour -> Colour;
+	check: Colour # Colour # Colour # Colour -> Bool;
+	go: Colour -> Bool;
+
+var
+	c1,c2,c3,c4 : Colour;
+
+eqn
+	next(none) = red;
+	next(red) = green;
+	next(green) = yellow;
+	next(yellow) = red;
+
+	go(c1) = (c1 == green || c1 == yellow);
+
+	check(c1,c2,c3,c4) = 
+		if(
+			((go(c1) || go(c3)) && (go(c2) || go(c4)))
+			,false
+			,true
+		);
+
+act
+	show: CardinalDirection # Colour;
+	changeActive;
+	changePhase;
+	changeActiveAll;
+	changePhaseBoth;
+
+proc
+	TrafficLight(d : CardinalDirection,c : Colour, active : Bool) = 
+		active 
+			-> show(d, next(c)).(
+				(next(c) == red)
+					-> changeActive.TrafficLight(d, next(c), !active)
+					<> changePhase.TrafficLight(d, next(c), active)
+			)
+			<> changeActive.TrafficLight(d, c, !active);
+
+init
+	hide(
+		{
+			changeActiveAll,
+			changePhaseBoth
+		},
+	allow(
+		{
+			show,
+			changeActiveAll,
+			changePhaseBoth
+		},
+	comm(
+		{
+			changeActive|changeActive|changeActive|changeActive -> changeActiveAll,
+			changePhase|changePhase -> changePhaseBoth
+		},
+		TrafficLight(west ,none, false) ||
+		TrafficLight(south,none, true)  ||
+		TrafficLight(east ,none, false) ||
+		TrafficLight(north,none, true)
+	)));
