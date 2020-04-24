@@ -1,0 +1,67 @@
+%
+% VM.mcrl2
+%
+% A Simple Vending Machine.
+%
+% Copyright (c) 2019-2019 HS Emden-Leer
+% All Rights Reserved.
+%
+% @version 1.00 - 01 Apr 2019 - GJV - initial version
+%
+
+% -----------------------------------------------------------------------------------------------------------------------
+%
+% Definition of the coins
+%
+sort
+	Coin = struct _5c | _10c | _20c | _50c | Euro;
+
+map
+	value: Coin  -> Int;	% the value of a coin as an integer
+
+eqn
+	...	
+
+% -----------------------------------------------------------------------------------------------------------------------
+%
+% Definition of the products
+%
+sort
+	Product = struct tea | coffee | cake | apple;
+
+map
+	price: Product  -> Int;	% the price of a product as an integer
+
+eqn
+	...
+
+% -----------------------------------------------------------------------------------------------------------------------
+%
+% Definition of the actions
+%
+act
+	accept: Coin;      % accept a coin inserted into the machine	
+	return: Coin;  	% returns change
+	offer: Product;      % offer the possibility to order a certain product
+	serve: Product;      % serve a certain product
+	returnChange: Int;	% request to return the current credit as  change
+
+%
+% Definition of the processes
+%
+proc
+	VendingMachine = VM(0);	
+
+	VM(credit : Int) =
+		...
+	;
+
+	ReturnChange(credit : Int) =
+		...
+	;
+
+% -----------------------------------------------------------------------------------------------------------------------
+
+init
+    	VendingMachine
+;

@@ -1,0 +1,74 @@
+%
+% VM.mcrl2
+%
+% A Simple Vending Machine.
+%
+% Copyright (c) 2019-2019 HS Emden-Leer
+% All Rights Reserved.
+%
+% @version 1.00 - 01 Apr 2019 - GJV - initial version
+%
+
+% -----------------------------------------------------------------------------------------------------------------------
+%
+% Definition of the coins
+%
+sort
+	Coin = struct _5c | _10c | _20c | _50c | Euro;
+
+map
+	value: Coin  -> Int;	% the value of a coin as an integer
+
+eqn
+	value(_5c) = 5;
+	value(_10c) = 10;
+	value(_20c) = 20;
+	value(_50c) = 50;
+	value(Euro) = 100;
+
+% -----------------------------------------------------------------------------------------------------------------------
+%
+% Definition of the products
+%
+sort
+	Product = struct tea | coffee | cake | apple;
+
+map
+	price: Product  -> Int;	% the price of a product as an integer
+
+eqn
+	price(tea) = 10;
+	price(coffee) = 25;
+	price(cake) = 60;
+	price(apple) = 80;
+
+% -----------------------------------------------------------------------------------------------------------------------
+%
+% Definition of the actions
+%
+act
+	accept: Coin;      % accept a coin inserted into the machine	
+	return: Coin;  	% returns change
+	offer: Product;      % offer the possibility to order a certain product
+	serve: Product;      % serve a certain product
+	returnChange: Int;	% request to return the current credit as  change
+
+%
+% Definition of the processes
+%
+proc
+	VendingMachine = VM(0);	
+
+	VM(credit : Int) =
+		(credit < 200) -> sum c : Coin.accept(c).VM(credit + value(c))
+		+ sum p: Product.((credit >= price(p)) -> (offer(p).serve(p).VM(credit - price(p))))
+		+ returnChange(credit).ReturnChange(credit);
+
+	ReturnChange(credit : Int) =
+		sum c : Coin.((credit >= value(c)) -> (return(c).VM(credit - value(c))));
+
+% -----------------------------------------------------------------------------------------------------------------------
+
+init
+    	VendingMachine;
+

@@ -1,0 +1,42 @@
+sort
+	CardinalDirection = struct north | east | south | west;
+	Colour = struct red | yellow | green;
+
+map
+	next: Colour -> Colour;
+	check: Colour # Colour # Colour # Colour -> Bool;
+
+var
+	%c1 = north, c2 = east, c3 = south, c4 = west
+	c1,c2,c3,c4: Colour;
+
+eqn
+	next(red) = green;
+	next(green) = yellow;
+	next(yellow) = red;
+
+	%true for safe configuration
+	check(c1,c2,c3,c4) = if(
+		(
+			(c1 != red || c3 != red) &&
+			(c2 != red || c4 != red)
+		),
+		false,
+ 		true);
+
+act
+	show: CardinalDirection # Colour;
+	crossingUnsafe: Colour # Colour # Colour # Colour;
+
+proc
+	TrafficLight(c1,c2,c3,c4 : Colour) = 
+		show(north, next(c1)).Monitor(c1=next(c1)).TrafficLight(c1=next(c1)) +
+		show(east,  next(c2)).Monitor(c2=next(c2)).TrafficLight(c2=next(c2)) +
+		show(south, next(c3)).Monitor(c3=next(c3)).TrafficLight(c3=next(c3)) +
+		show(west,  next(c4)).Monitor(c4=next(c4)).TrafficLight(c4=next(c4));
+
+	Monitor(c1,c2,c3,c4 : Colour) = 
+		!check(c1,c2,c3,c4) -> crossingUnsafe(c1,c2,c3,c4).delta <> tau;
+
+init
+	TrafficLight(red,red,red,red);

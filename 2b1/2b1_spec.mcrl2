@@ -1,0 +1,23 @@
+sort
+	CardinalDirection = struct north | east | south | west;
+	Colour = struct red | yellow | green;
+
+map
+	next: Colour -> Colour;
+
+eqn
+	next(red) = green;
+	next(green) = yellow;
+	next(yellow) = red;
+
+act
+	show: CardinalDirection # Colour;
+
+proc
+	TrafficLight(c : Colour, d : CardinalDirection) = 
+		show(d,c).TrafficLight(next(c),d);
+init
+	TrafficLight(red,north) ||
+	TrafficLight(red,east ) ||
+	TrafficLight(red,south) ||
+	TrafficLight(red,west ) ;
