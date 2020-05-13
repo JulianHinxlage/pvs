@@ -19,15 +19,28 @@ act
 	changePhaseBoth;
 
 proc
-	TrafficLight(d : CardinalDirection,c : Colour, active : Bool) = 
-		active 
+	TrafficLight(d: CardinalDirection) =
+		(d == north || d == south) 
+		-> TrafficLight(d, none)
+		<> TrafficLight(d, none);
+
+	TrafficLight(d : CardinalDirection,c : Colour) = 
+		(d == north || d == south) 
 			-> show(d, next(c)).(
 				(next(c) == red)
-					-> changeActive.TrafficLight(d, next(c), !active)
-					<> changePhase.TrafficLight(d, next(c), active)
+					-> changeActive.TrafficLight2(d, next(c))
+					<> changePhase.TrafficLight(d, next(c))
 			)
-			<> changeActive.TrafficLight(d, c, !active);
+			<> changeActive.TrafficLight2(d, c);
 
+	TrafficLight2(d : CardinalDirection,c : Colour) = 
+		(d == west || d == east) 
+			-> show(d, next(c)).(
+				(next(c) == red)
+					-> changeActive.TrafficLight(d, next(c))
+					<> changePhase.TrafficLight2(d, next(c))
+			)
+			<> changeActive.TrafficLight(d, c);
 init
 	hide(
 		{
@@ -45,8 +58,8 @@ init
 			changeActive|changeActive|changeActive|changeActive -> changeActiveAll,
 			changePhase|changePhase -> changePhaseBoth
 		},
-		TrafficLight(west ,none, false) ||
-		TrafficLight(south,none, true)  ||
-		TrafficLight(east ,none, false) ||
-		TrafficLight(north,none, true)
+		TrafficLight(west) ||
+		TrafficLight(south)  ||
+		TrafficLight(east) ||
+		TrafficLight(north)
 	)));
