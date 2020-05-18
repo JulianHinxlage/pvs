@@ -20,18 +20,25 @@ act
 
 proc
 	TrafficLight(d: CardinalDirection) =
-		(d == north || d == south) 
-			-> TrafficLight(d, none)
-			<> changeActive.TrafficLight(d, none);
-
+		TrafficLight(d, none);
 
 	TrafficLight(d : CardinalDirection,c : Colour) = 
-		show(d, next(c)).(
-			(next(c) == red)
-				-> changeActive.changeActive.TrafficLight(d, next(c))
-				<> changePhase.TrafficLight(d, next(c))
-		);
+		(d == north || d == south) 
+			-> show(d, next(c)).(
+				(next(c) == red)
+					-> changeActive.TrafficLight2(d, next(c))
+					<> changePhase.TrafficLight(d, next(c))
+			)
+			<> changeActive.TrafficLight2(d, c);
 
+	TrafficLight2(d : CardinalDirection,c : Colour) = 
+		(d == west || d == east) 
+			-> show(d, next(c)).(
+				(next(c) == red)
+					-> changeActive.TrafficLight(d, next(c))
+					<> changePhase.TrafficLight2(d, next(c))
+			)
+			<> changeActive.TrafficLight(d, c);
 
 	Crossing =
 		hide(
