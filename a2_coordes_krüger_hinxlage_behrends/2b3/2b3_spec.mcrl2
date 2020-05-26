@@ -1,0 +1,60 @@
+sort
+	CardinalDirection = struct north | east | south | west;
+	Colour = struct red | yellow | green | none;
+
+map
+	next: Colour -> Colour;
+	check: Colour # Colour # Colour # Colour -> Bool;
+	go: Colour -> Bool;
+
+var
+	c1,c2,c3,c4 : Colour;
+
+eqn
+	next(none) = red;
+	next(red) = green;
+	next(green) = yellow;
+	next(yellow) = red;
+
+	go(c1) = (c1 == green || c1 == yellow);
+
+	check(c1,c2,c3,c4) = 
+		if(
+			((go(c1) || go(c3)) && (go(c2) || go(c4)))
+			,false
+			,true
+		);
+
+act
+	show: CardinalDirection # Colour;
+	mon: CardinalDirection # Colour;
+
+proc
+	TrafficLight(d : CardinalDirection,c : Colour) = 
+		show(d,next(c)).TrafficLight(d,next(c));
+	
+	Monitor(c1,c2,c3,c4 : Colour) = 
+		check(next(c1),c2,c3,c4) -> mon(north, next(c1)).Monitor(c1=next(c1))+
+		check(c1,next(c2),c3,c4) -> mon(east , next(c2)).Monitor(c2=next(c2))+
+		check(c1,c2,next(c3),c4) -> mon(south, next(c3)).Monitor(c3=next(c3))+
+		check(c1,c2,c3,next(c4)) -> mon(west , next(c4)).Monitor(c4=next(c4));
+
+act
+	colourSeen: CardinalDirection # Colour;
+
+init
+	allow(
+		{
+			colourSeen
+		},
+	comm(
+		{
+			show|mon -> colourSeen
+		},
+		TrafficLight(west ,none) ||
+		TrafficLight(south,none) ||
+		TrafficLight(east ,none) ||
+		TrafficLight(north,none) ||
+		Monitor(none,none,none,none)
+	));
+
