@@ -1,4 +1,4 @@
-package main_v1
+package main
 
 import (
 	"log"

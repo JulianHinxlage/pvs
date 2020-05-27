@@ -44,7 +44,13 @@ var changeActiveChannelWest = make(chan string, 3)
 var changePhaseChannel1 = make(chan string, 1)
 var changePhaseChannel2 = make(chan string, 1)
 
+//zur Synchronisierung aller Ampeln
 func changeActive(d CardinalDirection) {
+	//bei der Synchronisierung wird eine Nachricht
+	//an alle anderen Ampeln(channels) gesendet.
+	//dannach wird eine Nachricht für jede andere Ampel empfangen.
+	//nur wenn alle Ampeln in dies Funktion eintreten, wird die Ausführung aller
+	//Ampeln fortgesetzt, da dann alle nachricht vorhanden ist.
 	switch d {
 	case north:
 		changeActiveChannelEast <- "a"
@@ -77,7 +83,10 @@ func changeActive(d CardinalDirection) {
 	}
 }
 
+//zwei Ampeln Synchronisieren
 func changePhase(d CardinalDirection){
+	//es wird eine Nachricht an dei andere Ampel gesendet
+	//und die Nachricht von der anderen Ampel empfangen.
 	if d == east || d == north {
 		changePhaseChannel1<- "a"
 		<-changePhaseChannel2
@@ -92,8 +101,10 @@ func show(d CardinalDirection, c Colour){
 }
 
 func TrafficLight(d CardinalDirection){
+	//Colour c
 	var c = none
 	if d == west || d == east {
+		//west und east warten auf den ersten Richtungswechsel.
 		changeActive(d)
 	}
 
@@ -101,11 +112,14 @@ func TrafficLight(d CardinalDirection){
 		time.Sleep(100 * time.Millisecond)
 		show(d, next(c))
 		if next(c) == red {
+			//zwei mal die Richtung Wechseln damit die Ampel wieder an der Reihe ist.
 			changeActive(d)
 			changeActive(d)
 		}else{
+			//den Farbwechsel Synchronisieren
 			changePhase(d)
 		}
+		//Iteration anstatt Rekrusion
 		c = next(c)
 	}
 }
