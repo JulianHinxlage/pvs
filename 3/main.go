@@ -5,22 +5,52 @@ import (
 )
 
 //Definition der Himmelsrichtung
-type CardinalDirection string
+type CardinalDirection int
 const(
-	north CardinalDirection = "north"
-	east = "east"
-	south = "south"
-	west = "west"
+	north CardinalDirection = 0
+	east = 1
+	south = 2
+	west = 3
 )
 
 //Definition der Ampelfarbe
-type Colour string
+type Colour int
 const(
-	none Colour = "none"
-	red = "red"
-	yellow = "yellow"
-	green = "green"
+	none Colour = 1
+	red = 2
+	yellow = 3
+	green = 4
 )
+
+func directionToString(d CardinalDirection) string {
+	switch d {
+	case north:
+		return "none"
+	case east:
+		return "east"
+	case south:
+		return "south"
+	case west:
+		return "west"
+	default:
+		return ""
+	}
+}
+
+func colourToString(c Colour) string {
+	switch c {
+	case none:
+		return "none"
+	case red:
+		return "red"
+	case yellow:
+		return "yellow"
+	case green:
+		return "green"
+	default:
+		return ""
+	}
+}
 
 //Definition der Phasen Reihenfolge
 func next(c Colour)  Colour{
@@ -60,7 +90,7 @@ func changeActive(phaseChannel chan bool, activeChannel chan bool) {
 }
 
 func show(d CardinalDirection, c Colour){
-	log.Print("show(" + string(d) + ", " + string(c) + ")")
+	log.Print("show(" + directionToString(d) + ", " + colourToString(c) + ")")
 }
 
 func TrafficLight(d CardinalDirection, phaseChannel chan bool, activeChannel chan bool){
