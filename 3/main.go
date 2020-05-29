@@ -71,11 +71,9 @@ func next(c Colour)  Colour{
 
 //zwei goroutines werden über einen channel synchronisiert
 func synchronize(channel chan bool){
-	for i := 0; i < 2; i++ {
-		select {
-		case _ = <-channel:
-		case channel <- true:
-		}
+	select {
+	case _ = <-channel:
+	case channel <- true:
 	}
 }
 
