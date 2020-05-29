@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 )
 
 //Definition der Himmelsrichtung
@@ -16,10 +17,10 @@ const(
 //Definition der Ampelfarbe
 type Colour int
 const(
-	none Colour = 1
-	red = 2
-	yellow = 3
-	green = 4
+	none Colour = 0
+	red = 1
+	yellow = 2
+	green = 3
 )
 
 func directionToString(d CardinalDirection) string {
@@ -103,6 +104,7 @@ func TrafficLight(d CardinalDirection, phaseChannel chan bool, activeChannel cha
 	}
 
 	for true{
+		time.Sleep(time.Millisecond * 100)
 		show(d, next(c))
 		if next(c) == red {
 			//zwei mal die Richtung Wechseln damit die Ampel wieder an der Reihe ist.
