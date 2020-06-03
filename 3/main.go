@@ -2,31 +2,32 @@ package main
 
 import (
 	"log"
-	"time"
 )
 
 //Definition der Himmelsrichtung
 type CardinalDirection int
-const(
+
+const (
 	north CardinalDirection = 0
-	east = 1
-	south = 2
-	west = 3
+	east                    = 1
+	south                   = 2
+	west                    = 3
 )
 
 //Definition der Ampelfarbe
 type Colour int
-const(
-	none Colour = 0
-	red = 1
-	yellow = 2
-	green = 3
+
+const (
+	none   Colour = 0
+	red           = 1
+	yellow        = 2
+	green         = 3
 )
 
 func directionToString(d CardinalDirection) string {
 	switch d {
 	case north:
-		return "none"
+		return "north"
 	case east:
 		return "east"
 	case south:
@@ -54,23 +55,23 @@ func colourToString(c Colour) string {
 }
 
 //Definition der Phasen Reihenfolge
-func next(c Colour)  Colour{
+func next(c Colour) Colour {
 	switch c {
 	case none:
 		return red
 	case red:
-		return yellow
-	case yellow:
 		return green
-	case green:
+	case yellow:
 		return red
+	case green:
+		return yellow
 	default:
 		return none
 	}
 }
 
 //zwei goroutines werden über einen channel synchronisiert
-func synchronize(channel chan bool){
+func synchronize(channel chan bool) {
 	select {
 	case _ = <-channel:
 	case channel <- true:
@@ -78,7 +79,7 @@ func synchronize(channel chan bool){
 }
 
 //zwei gegenüberliegende Ampeln Synchronisieren
-func changePhase(phaseChannel chan bool){
+func changePhase(phaseChannel chan bool) {
 	synchronize(phaseChannel)
 }
 
@@ -88,11 +89,11 @@ func changeActive(phaseChannel chan bool, activeChannel chan bool) {
 	synchronize(phaseChannel)
 }
 
-func show(d CardinalDirection, c Colour){
+func show(d CardinalDirection, c Colour) {
 	log.Print("show(" + directionToString(d) + ", " + colourToString(c) + ")")
 }
 
-func TrafficLight(d CardinalDirection, phaseChannel chan bool, activeChannel chan bool){
+func TrafficLight(d CardinalDirection, phaseChannel chan bool, activeChannel chan bool) {
 	//Colour c
 	var c = none
 
@@ -101,14 +102,14 @@ func TrafficLight(d CardinalDirection, phaseChannel chan bool, activeChannel cha
 		changeActive(phaseChannel, activeChannel)
 	}
 
-	for true{
-		time.Sleep(time.Millisecond * 100)
+	for {
+		//time.Sleep(time.Millisecond * 100)
 		show(d, next(c))
 		if next(c) == red {
 			//zwei mal die Richtung Wechseln damit die Ampel wieder an der Reihe ist.
 			changeActive(phaseChannel, activeChannel)
 			changeActive(phaseChannel, activeChannel)
-		}else{
+		} else {
 			//den Farbwechsel Synchronisieren
 			changePhase(phaseChannel)
 		}
@@ -117,7 +118,7 @@ func TrafficLight(d CardinalDirection, phaseChannel chan bool, activeChannel cha
 	}
 }
 
-func main(){
+func main() {
 	var quitChannel = make(chan bool)
 
 	//Synchronisations Channel anlegen
